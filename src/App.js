@@ -1,16 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import './App.css';
 import { askForPermissionToReceiveNotifications } from './firebase-config';
 
 function App() {
+  const [token, setToken] = useState('');
+
   useEffect(() => {
-    askForPermissionToReceiveNotifications().then((token) => console.log(token));
+    askForPermissionToReceiveNotifications()
+      .then(fetchedToken => {
+        console.log(fetchedToken);
+        setToken(fetchedToken); // Сохраняем токен в состоянии
+      });
   }, []);
 
   return (
     <div className="App">
       <header className="App-header">
         <p>Push Notification Demo</p>
-        <button onClick={askForPermissionToReceiveNotifications}>Enable Notifications</button>
+        <button onClick={() => askForPermissionToReceiveNotifications().then(setToken)}>
+          Enable Notifications
+        </button>
+        {token && <div><p>Your Notification Token:</p><textarea readOnly value={token} /></div>}
       </header>
     </div>
   );
